@@ -1,31 +1,48 @@
 import React, { useState } from "react";
-import axios from 'axios'
-import {useHistory} from 'react-router-dom'
+import axios from "axios";
+import { useHistory } from "react-router-dom";
 const Register = () => {
-  const history = useHistory()
+  const history = useHistory();
+  const [passwordMatch, setPasswordNotMatch]=useState(false)
   const initialState = { username: "", email: "", password: "", password2: "" };
   const [user, setUser] = useState(initialState);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
   };
-  const createUser = async (e) =>{
-      e.preventDefault()
-     try{
-      await axios.post('http://localhost:4000/createUser',
-      user
-    
-    )
-    history.push('/')
-     }catch(e){
-        console.log(e)
-     }
+
+  const checkPasswordMatch =()=>{
+    if (user.password !== user.password2) {
+      setPasswordNotMatch(true);
+      setTimeout(() => {
+        setPasswordNotMatch(false);
+        
+      }, 4000);
+      return false
+    }
+    return true
+
   }
+
+  const createUser = async (e) => {
+    e.preventDefault();
+    const checkPassword =checkPasswordMatch()
+    console.log(checkPassword)
+    try {
+     if(checkPassword){
+      await axios.post("http://localhost:4000/createUser", user);
+      history.push('/')
+     }
+     return
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <form className="container" onSubmit={createUser}>
       <div className="flex max-w-sm md:max-w-lg w-full h-70 justify-center bg-white shadow-md rounded-lg overflow-hidden mx-auto flex flex-col p-9 ">
         <h3 className="text-2xl font-bold mb-4">Register</h3>
-
+        {passwordMatch ? <p className="text-center text-sm text-red-400">Passwords dont match</p> : ''}
         <div className="relative h-10 input-component mb-5">
           <input
             id="username"
@@ -33,6 +50,7 @@ const Register = () => {
             name="username"
             className="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
             onChange={handleChange}
+            required
           />
           <label
             htmlFor="username"
@@ -48,6 +66,7 @@ const Register = () => {
             name="email"
             className="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
             onChange={handleChange}
+            required
           />
           <label
             htmlFor="email"
@@ -64,6 +83,7 @@ const Register = () => {
             name="password"
             className="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
             onChange={handleChange}
+            required
           />
           <label
             htmlFor="password"
@@ -79,6 +99,7 @@ const Register = () => {
             name="password2"
             className="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
             onChange={handleChange}
+            required
           />
           <label
             htmlFor="password2"
@@ -87,13 +108,12 @@ const Register = () => {
             Repite Password
           </label>
         </div>
-        <button 
-        className="w-1/2 bg-blue-500 mx-auto my-1 rounded-sm font-semibold p-2 mt-5 text-white  hover:bg-purple-700"
-        
-        >
+        <button className="w-1/2 bg-blue-500 mx-auto my-1 rounded-sm font-semibold p-2 mt-5 text-white  hover:bg-purple-700">
           Sign in
         </button>
-        <p className="m-auto mt-2t text-gray-600">Dont have account? Register</p>
+        <p className="m-auto mt-2t text-gray-600">
+          Dont have account? Register
+        </p>
       </div>
     </form>
   );

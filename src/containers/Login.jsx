@@ -1,14 +1,17 @@
-import { useState } from "react";
-import {useHistory} from "react-router-dom";
+import { useState, useContext } from "react";
+import {useHistory, Link} from "react-router-dom";
 import "../styles/login.css";
+import AppContext from "../context/ContextHook";
 
 import axios from "axios";
+
 const Login = () => {
+  const {state, addUser} =useContext(AppContext);
+
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [errror, setError]= useState("");
-  const [user, setUser] = useState(false);
+  const [error, setError]= useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,14 +20,18 @@ const Login = () => {
         email,
         password,
       });
-      setUser(true);
+      addUser(response.data)
+      
       window.localStorage.setItem("userloged", JSON.stringify(response.data));
+      
+      history.push('/dash/1')
+    } catch (e) {
+      setError(true)
       setPassword("");
       setEmail("");
-      history.push(`/dash/${response.data._id}`)
-      console.log(response.data)
-    } catch (e) {
-      console.log(e)
+      setTimeout(()=>{
+        setError(false)
+      },3000)
     }
   };
 
@@ -33,16 +40,18 @@ const Login = () => {
     <div className="container">
       <div className="flex max-w-sm md:max-w-lg w-full h-70 justify-center bg-white shadow-md rounded-lg overflow-hidden mx-auto flex flex-col p-9 ">
         <h3 className="text-2xl font-bold mb-4">Login</h3>
-
+        {error ? <p className="text-red-700 text-center text-sm">Error try again</p> : ''}
         <div className="relative h-10 input-component mb-5">
           <input
             id="email"
             type="text"
             name="email"
+            value={email}
             className="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
             onChange={(e) => {
               setEmail(e.target.value);
             }}
+            required
           />
           <label
             htmlFor="email"
@@ -56,10 +65,12 @@ const Login = () => {
             id="password"
             type="password"
             name="password"
+            value={password}
             className="h-full w-full border-gray-300 px-2 transition-all border-blue rounded-sm"
             onChange={(e) => {
               setPassword(e.target.value);
             }}
+            required
           />
           <label
             htmlFor="password"
@@ -74,6 +85,7 @@ const Login = () => {
         >
           Sign in
         </button>
+        <Link to="/register" className="text-center text-gray-500 text-sm">Create an account</Link>
       </div>
     </div>
   );
