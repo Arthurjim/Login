@@ -8,8 +8,15 @@ const useInitialState =()=>{
       user:{...state.user,payload}
     })
   }
+  const listNotes = payload =>{
+    setState({
+      ...state,
+      notes:[...state.notes,payload]
+    })
+  }
 
   return {
+    listNotes,
     addUser,
     state
   }

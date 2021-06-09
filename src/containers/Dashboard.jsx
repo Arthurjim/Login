@@ -4,12 +4,23 @@ import {useParams} from 'react-router-dom'
 import AppContext from "../context/ContextHook";
 import '../styles/dash.css'
 const Dashboard = () => {
-  let { id } = useParams();
-  const {state} = useContext(AppContext);
-  const {user} = state
-  console.log(user.payload)
-
-  console.log(user)  
+  const {state,listNotes} = useContext(AppContext);
+  const {user,notes} = state
+  const getNotes = async ()=>{
+    
+    try{
+    const notes = await axios(`http://localhost:4000/notes/${user.payload._id}`)
+    listNotes(notes.data)
+    
+    }catch(error){
+      console.error(error)
+    }
+  }
+  useEffect(()=>{
+    getNotes()
+    
+  },[])
+  
   return (
     <div className="container-dashboard">
       <h2 className="text-center text-2xl font-bold  ">YOUR NOTES</h2>

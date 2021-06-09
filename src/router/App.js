@@ -14,7 +14,7 @@ const App = () => {
         <Switch>
           <Route exact path="/" component={Login} />
           <Route exact path="/register" component={Register} />
-          <Route exact path="/dash/:id" component={Dashboard} />
+          <Route exact path="/dash/" component={Dashboard} />
           <Route exact path="/newnote" component={FormNotes} />
         </Switch>
       </AppContext.Provider>

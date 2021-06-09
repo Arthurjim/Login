@@ -24,7 +24,7 @@ const Login = () => {
       
       window.localStorage.setItem("userloged", JSON.stringify(response.data));
       
-      history.push('/dash/1')
+      history.push('/dash')
     } catch (e) {
       setError(true)
       setPassword("");
